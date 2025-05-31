@@ -14,16 +14,16 @@ def main(args=None):
     # Initialize the Kalman Filter
     mu0 = np.zeros(3)
     Sigma0 = np.eye(3)
-    # Ajuste balanceado
-    #proc_noise_std = [1.22, 1.22, 0.44]
-    #obs_noise_std = [1.22, 1.22, 0.44]
-    # Alta Q
-    #proc_noise_std = [1.22, 1.22, 0.44]
-    #obs_noise_std = [2.44, 2.44, 0.88]   
-    # Alta R
-    proc_noise_std = [2.44, 2.44, 0.88]
-    obs_noise_std = [1.22, 1.22, 0.44]
-
+    # Ajuste Balanceado
+    #proc_noise_std = [0.002, 0.002, 0.001]  
+    #obs_noise_std = [1.02, 1.02, 100.01]    
+    # Ajuste con Alta Q
+    #proc_noise_std = [0.002, 0.002, 0.001]  
+    #obs_noise_std = [10.0, 10.0, 1000.0]   
+    # Ajuste con Alta R
+    proc_noise_std = [0.2, 0.2, 0.1]       
+    obs_noise_std = [1.02, 1.02, 100.01]    
+    
     ekf = ExtendedKalmanFilter(mu0, Sigma0, 
                                velocity_motion_model_linearized,
                                odometry_observation_model_linearized,

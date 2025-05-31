@@ -16,15 +16,16 @@ def main(args=None):
     mu0 = np.zeros(7)
     Sigma0 = np.eye(7)
 
-    # Ajuste balanceado
-    #proc_noise_std = [1.0, 1.0, 0.5, 0.2, 0.2, 0.5, 0.5]
-    #obs_noise_std = [1.0, 1.0, 0.5, 0.2, 0.2, 0.5, 0.5]
-    # Alta Q
-    #proc_noise_std = [1.0, 1.0, 0.5, 0.2, 0.2, 0.5, 0.5]
-    #obs_noise_std = [2.0, 2.0, 1.0, 0.4, 0.4, 1.0, 1.0]
-    # Alta R
-    proc_noise_std = [2.0, 2.0, 1.0, 0.4, 0.4, 1.0, 1.0]
-    obs_noise_std = [1.0, 1.0, 0.5, 0.2, 0.2, 0.5, 0.5]
+    # Ajuste Balanceado
+    #proc_noise_std = [0.1, 0.1, 0.05, 0.1, 0.1, 0.1, 0.1] 
+    #obs_noise_std  = [100.0, 100.0, 1000.0, 6.853891945200942e-06, 1.0966227112321507e-06, 0.0015387262937311438, 0.0015387262937311438] 
+    # Ajuste con Alta Q
+    #proc_noise_std = [0.1, 0.1, 0.05, 0.1, 0.1, 0.1, 0.1]  
+    #obs_noise_std  = [1000.0, 1000.0, 10000.0, 6.853891945200942e-05, 1.0966227112321507e-05, 0.15, 0.15]  
+    # Ajuste con Alta R
+    proc_noise_std = [1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 1.0]  
+    obs_noise_std  = [100.0, 100.0, 1000.0, 6.853891945200942e-06, 1.0966227112321507e-06, 0.0015387262937311438, 0.0015387262937311438]  
+
 
     # === TODO: Replace the None below with proper motion and observation model functions ===
     ekf = ExtendedKalmanFilter(mu0, Sigma0,

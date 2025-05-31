@@ -32,49 +32,49 @@ class ExtendedKalmanFilter:
 
 		
 	def predict(self, u, dt):
-		start_time = time.time()
-        # === TODO: Implement the EKF prediction step ===
+			start_time = time.time()
 
-        # 1. Predict the new mean using motion model g
-		self.mu = self.g(self.mu, u, dt)
-        # 2. Compute the Jacobian of the motion model G_t
-		#self.G = self.G(self.mu, u, dt)
-        # 3. Update the covariance
-		self.Sigma = self.G(self.mu, u, dt) @ self.Sigma @ self.G(self.mu, u, dt).T + self.R
-        # ===============================================
+			# 1. Calcular nueva estimación de estado usando función de transición g
+			self.mu = self.g(self.mu, u, dt)
 
-		end_time = time.time()
-		execution_time = end_time - start_time
-		self.exec_times_pred.append(execution_time)
-		print(f"Execution time prediction: {execution_time} seconds")
+			# 2. Calcular Jacobiano de la función g respecto al estado
+			G_t = self.G(self.mu, u, dt)
 
-		print("Average exec time pred: ", sum(self.exec_times_pred) / len(self.exec_times_pred))
+			# 3. Calcular Jacobiano de la función g respecto a la entrada de control (no usado aquí directamente)
+			V = self.V(self.mu, u, dt)
 
+			# 4. Actualizar la matriz de covarianza con la propagación del error y ruido de proceso
+			self.Sigma = G_t @ self.Sigma @ G_t.T + self.R
 
-		return self.mu, self.Sigma
+			end_time = time.time()
+			execution_time = end_time - start_time
+			self.exec_times_pred.append(execution_time)
+
+			return self.mu, self.Sigma
 
 	def update(self, z, dt):
 		start_time = time.time()
 
-        # === TODO: Implement the EKF correction step ===
+		# 1. Calcular Jacobiano de la función de observación H_t en el estado actual
+		H_t = self.H(self.mu)
 
-        # 1. Compute the Jacobian of the observation model H_t
-		#self.H = self.H(self.mu)
-        # 2. Innovation covariance
-		S = self.H(self.mu) @ self.Sigma @ self.H(self.mu).T + self.Q
-        # 3. Kalman gain
-		K = self.Sigma @ self.H(self.mu).T @ np.linalg.inv(S)
-        # 4. Innovation (difference between actual and expected measurement)
-		y = z - self.h(self.mu)
-        # 5. Update the state estimate
-		self.mu = self.mu + (K @ y).reshape((self.mu.shape[0],))
-		
-        # 6. Update the covariance
-		self.Sigma = (np.eye(len(K)) - K @ self.H(self.mu)) @ self.Sigma
-		
+		# 2. Calcular la covarianza de la innovación
+		S = H_t @ self.Sigma @ H_t.T + self.Q
+
+		# 3. Calcular la ganancia de Kalman K
+		K = self.Sigma @ H_t.T @ np.linalg.inv(S)
+
+		# 4. Calcular la innovación (diferencia entre observación real y estimada)
+		z_vec = z.reshape(-1)
+		h_vec = self.h(self.mu).reshape(-1)
+		y = z_vec - h_vec
+
+		# 5. Actualizar la estimación del estado usando la ganancia de Kalman y la innovación
+		self.mu = self.mu + K @ y
+
+		# 6. Actualizar la matriz de covarianza de la estimación
 		I = np.eye(len(self.mu))
-
-        # ================================================
+		self.Sigma = (I - K @ H_t) @ self.Sigma
 
 		end_time = time.time()
 		self.exec_times_upd.append(end_time - start_time)
